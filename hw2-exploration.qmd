@@ -1,0 +1,365 @@
+---
+title: "Assignment 4"
+author: "Sam Lance"
+date: February 2, 2025
+format:
+  html:
+    code-fold: false
+    toc: true
+    number-sections: true
+    embed-resources: true
+    theme: Cyborg
+editor: visual
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+## 📖 Loading Libraries
+
+```{r}
+#| echo: true
+#| message: false
+
+library(ggplot2)
+library(tidyverse)
+library(here)
+library(janitor)
+library(patchwork)
+library(lubridate)
+library(forcats)
+library(gghighlight)
+library(stringr)
+library(maps)
+library(ggtext)
+library(showtext)
+library(scales)
+```
+
+## 🎨 Design Elements
+
+```{r}
+#importing colors 
+dorange <- c("#BA2D0B")
+porange <- c("#ffba08")
+v_grey <- c("#c0c0c0")
+v_black <- c("#000000")
+
+#fonts
+font_add_google(name = "Roboto", family = "roboto")
+showtext_auto()
+```
+
+## 🌋 Loading Data
+
+```{r}
+#| echo: true
+#| message: false
+
+volcano_og <- read.csv(here("data", "volcano_list.csv"))
+volcano_pop_og <- read.csv(here("data", "volcano_pop.csv"))
+
+volcano_mod <- volcano_og |>
+  clean_names() |>
+  filter(last_known_eruption != "Unknown") |>
+  mutate(
+    eruption_year = case_when(
+      grepl("BCE", last_known_eruption) ~ -as.numeric(gsub(" BCE", "", last_known_eruption)),
+      grepl("CE", last_known_eruption)  ~ as.numeric(gsub(" CE", "", last_known_eruption)),
+      TRUE ~ as.numeric(last_known_eruption))) |>
+  arrange(eruption_year) 
+
+volcano_pop <- volcano_pop_og |>
+  clean_names() |>
+  filter(last_known_eruption != "Unknown") |>
+  mutate(
+    eruption_year = case_when(
+      grepl("BCE", last_known_eruption) ~ -as.numeric(gsub(" BCE", "", last_known_eruption)),
+      grepl("CE", last_known_eruption)  ~ as.numeric(gsub(" CE", "", last_known_eruption)),
+      TRUE ~ as.numeric(last_known_eruption))) 
+```
+
+## 🗺️ Exploratory Data Analysis
+
+### ⏳ Question 1: What years had the most volcanic eruptions?
+
+#### Creating Count DF
+
+```{r}
+#| echo: true
+#| message: false
+
+year_count  <- volcano_mod |>
+  group_by(eruption_year) |>
+  summarize(eruption_count = n(), .groups = "drop")
+```
+
+#### Creating Exploratory Plot
+
+```{r}
+
+year_count |>
+  filter(eruption_year > 0) |>
+  ggplot(aes(x= eruption_year, y= eruption_count)) +
+  geom_line(color= "darkorange2") +
+  theme_bw() +
+  labs(x= "Eruption Year", 
+       y= "# of Eruptions", 
+       title = "Number of Eruptions for Each Year from 0CE to 2024 CE") +
+  theme(legend.position = "none")
+```
+
+### 🪨 Question 2: What is the most common dominant volcanic rock type for active volcanoes?
+
+#### Creating Rock DF
+
+```{r}
+levels(as.factor(volcano_mod$dominant_rock_type))
+
+rock_type <- volcano_mod |>
+  filter(last_known_eruption != "Unknown") |>
+  filter(!dominant_rock_type %in% c("No Data (checked)", "")) |>
+   mutate(rock_type = recode(dominant_rock_type, 
+                           "Andesite / Basaltic Andesite" = "Andesite",
+                           "Basalt / Picro-Basalt" = "Basalt",
+                           "Trachybasalt / Tephrite Basanite" = "Trachybasalt + Tephrite",
+                           "Trachyandesite / Basaltic Trachyandesite" = "Trachyandesite",
+                           "Phono-tephrite /  Tephri-phonolite" = "Other",
+                           "Trachyte / Trachydacite" = "Trachyte"))
+```
+
+#### Creating Exploratory Plot
+
+```{r}
+rock_type |>
+  filter(eruption_year > 0) |>
+  ggplot(aes(x = fct_infreq(dominant_rock_type))) +  # Orders by frequency
+  geom_bar() +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = 0.01)) +
+  theme_bw() +
+  labs(x= NULL, 
+       y= "# of Eruptions", 
+       title = "Number of Eruptions from 0 CE to 2024 CE") 
+```
+
+### 🌎 Question 3: What is the spatial distribution of active volcanoes and what type of volcanoes are they?
+
+```{r}
+
+world_map <- map_data("world")
+
+volcano_mod_1 <- volcano_mod |>
+    filter(eruption_year > 0)
+
+ggplot() +
+  geom_polygon(data = world_map, aes(x = long, y = lat, group = group), fill = "gray90", color = "gray90") +
+  coord_map("ortho", orientation = c(0, 140, 0)) +  # Centering on Pacific Ocean
+  geom_point(data = volcano_mod_1, 
+             aes(x = longitude, y = latitude, color = volcano_landform), 
+             size = 0.5) +
+  scale_color_manual(values = c("firebrick1", "sienna1", "olivedrab4", "gold", "dodgerblue4", "purple4", "violetred3")) +
+  scale_color_hue(c = 70) +
+  theme_minimal() +
+  labs(title = "Map of Volcano Types Worldwide",
+       x = "Longitude", y = "Latitude") +
+  theme(legend.position = NULL, legend.title = element_blank())
+```
+
+### Question 4: What tectonic location do most volcanoes occur in?
+
+```{r}
+volcano_count  <- volcano_mod |>
+  drop_na() |>
+  group_by(tectonic_setting) |>
+  summarize(eruption_count = n(), .groups = "drop") 
+
+write_csv(volcano_count, "volcano_count.csv")
+```
+
+## ❓Questions
+
+### **What have you learned about your data? Have any potentially interesting patterns emerged?**
+
+So far, it looks like there are more volcanic eruptions reported in the last 100-150 years, likely due to better reporting and the spread of information throughout the world. It also looks like in the last 3 years there was also a spike in volcanic activity, with over 60 volcanoes erupting in 2024.
+
+In terms of rock type and volcano type, it looks like composite volcanoes of andesitic composition are common. This observation is supported by evidence that volcanos tend to form around subduction zones, such as the one around the Pacific Ocean) where composite volcanoes generally form and, due to mixing with continental crust form andesitic rock.
+
+After taking a look at the data, I think my info-graphic will probably be about how volcanoes form most frequently in subduction zones, and how that specific geologic setting creates a specific type of volcano (composite) and rock type. It can be more of a geology 101 guide to volcanoes, that is supported with real world volcano data.
+
+### **In HW #1, you outlined some questions that you wanted to answer using these data. Have you made any strides towards answering those questions? If yes, how so? If no, what next steps do you need to take (e.g. I need to create X plot type, I still need to track down Y data, I need to restructure existing data so that you can visualize it in Z ways, etc.)?**
+
+I think I have a good sense of when the majority of the eruption data occurred, where it occurred, and one possible factor that could explain why they are located there. To confirm my observations, I would love to make a similar map with tectonic setting as well, to see how that tracks with my current trends.
+
+### What challenges do you foresee encountering with your data? These can be data wrangling and / or visualization challenges.
+
+Currently I am not having any major wranging problems, but I might run out of interesting trends to explore with this data. If so, I will make sure to go find something else interesting!
+
+## 🎩 Creating Refined Data Visualizations
+
+### Maps Maps Maps
+
+#### Filtering for Composite Volcanoes
+
+```{r}
+
+composite_volcanoes <- volcano_mod_1 |>
+  filter(volcano_landform == "Composite")
+
+other_volcanoes <- volcano_mod_1 |>
+  filter(volcano_landform != "Composite")
+```
+
+#### Map of Composite Volcanoes
+
+```{r}
+
+world <- ne_download(scale = 110, type = "countries", category = "cultural")
+
+volcano_map <- ggplot(data = world) +
+  geom_sf(fill = v_grey, color = v_grey) +
+  geom_point(data = other_volcanoes, 
+             aes(x = longitude, y = latitude, color = porange), 
+             size = 0.75) +
+  geom_point(data = composite_volcanoes, 
+             aes(x = longitude, y = latitude, color = dorange), 
+             size = 0.75) +
+  scale_color_identity() +  # Use scale_color_identity to preserve the colors specified
+  theme_void() +
+  labs(title = NULL,
+       x = NULL, y = NULL) +
+  theme(legend.position = NULL, 
+        legend.title = element_blank(),
+        plot.background = element_rect(fill = v_black))
+
+volcano_map
+
+ggsave(
+  filename = here::here("images", "volcano_map.png"),
+  plot = volcano_map, 
+  device = "png",
+  width = 8, 
+  height = 7,
+  unit = "in"
+)
+```
+
+### Remaking Bar Plot of Rock Type
+
+```{r}
+rock_plot <- rock_type |>
+  filter(eruption_year > 0) |>
+  ggplot(aes(x = fct_rev(fct_infreq(rock_type)))) +  # Reverse the order of the factor levels
+  geom_bar(fill = dorange, alpha = 0.8) +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = 0.01)) +
+  labs(x = NULL, 
+       y = "Total Number of Eruptions", 
+       title = "Eruptions by Rock Type",
+       subtitle = "What are the rocks most frequently produced by volcanic eruptions?") +
+  gghighlight(dominant_rock_type == "Andesite / Basaltic Andesite", 
+              use_direct_label = FALSE) +
+  theme(axis.text.x = element_text(color= dorange, 
+                                   size = 40, 
+                                   family = "roboto"),
+        axis.text.y = element_text(color= dorange, 
+                                   size = 40, 
+                                   family = "roboto"),
+        axis.title.y = element_text(color= dorange, 
+                                    size = 40, 
+                                    family = "roboto"),
+        plot.title = element_text(color= v_grey, 
+                                  size = 50, 
+                                  family = "roboto",
+                                  face = "bold"),
+        plot.subtitle = element_text(color= v_grey, 
+                                     size = 35, 
+                                     family = "roboto",
+                                     face = "italic"),
+        plot.background = element_rect(fill = v_black),
+        panel.background = element_rect(fill = v_black),
+        panel.grid = element_line(color = v_black))
+
+ggsave(
+  filename = here::here("images", "rock_type.png"),
+  plot = rock_plot, 
+  device = "png",
+  width =9, 
+  height =4,
+  unit = "in"
+)
+rock_plot
+```
+
+```{r}
+rock_type <- rock_type |>
+  filter(eruption_year > 0) |>
+  mutate(dominant_rock_type = fct_rev(fct_infreq(dominant_rock_type)))
+
+rock_plot <- rock_type |>
+  ggplot(aes(x = dominant_rock_type)) +  # Reverse the order of the factor levels
+  geom_bar(fill = dorange, alpha = 0.8) +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = 0.01)) +
+  #scale_x_discrete(labels = function(x) strwrap(x, width = 15)) +  # Wrap text after 15 characters
+  labs(x = NULL, 
+       y = "Total Number of Eruptions", 
+       title = NULL) +
+  gghighlight(dominant_rock_type == "Andesite / Basaltic Andesite", 
+              use_direct_label = FALSE) +
+  theme(axis.text.x = element_text(color= dorange, size = 14, family = "roboto"),
+        axis.text.y = element_text(color= dorange, size = 14, family = "roboto"),
+        axis.title.y = element_text(color= dorange, size = 14, family = "roboto"),
+        plot.background = element_rect(fill = v_black),
+        panel.background = element_rect(fill = v_black),
+        panel.grid = element_line(color = v_black))
+
+ggsave(
+  filename = here::here("images", "rock_type.png"),
+  plot = rock_plot, 
+  device = "png",
+  width =9, 
+  height =4,
+  unit = "in"
+)
+rock_plot
+```
+
+Circle Graph
+
+```{r}
+volcano_loc <- read_csv(here("data", "volcano_count.csv"))
+
+# Compute percentages
+volcano_loc$fraction = volcano_loc$eruption_count / sum(volcano_loc$eruption_count)
+
+# Compute the cumulative percentages (top of each rectangle)
+volcano_loc$ymax = cumsum(volcano_loc$fraction)
+
+# Compute the bottom of each rectangle
+volcano_loc$ymin = c(0, head(volcano_loc$ymax, n=-1))
+ 
+# Make the plot
+zone <- ggplot(volcano_loc, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=tectonic_setting)) +
+  geom_rect() +
+  coord_polar(theta="y") + 
+  xlim(c(2, 4)) +
+  scale_fill_manual(values = c("#c0c0c0",  "#ffba08", "#BA2D0B" )) +
+  theme_void() +
+  theme(plot.background = element_rect(fill = v_black),
+        panel.background = element_rect(fill = v_black),
+        legend.text = element_text(color = v_grey, size = 47),
+        legend.position = "bottom")
+
+zone
+
+ggsave(
+  filename = here::here("images", "form_zone.png"),
+  plot = zone, 
+  device = "png",
+  width =5, 
+  height =5,
+  unit = "in"
+)
+```

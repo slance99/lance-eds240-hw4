@@ -1,0 +1,265 @@
+---
+title: "Assignment 3 - Drafting Visualizations"
+author: "Sam Lance"
+date: February 20, 2025
+format:
+  html:
+    code-fold: true
+    toc: true
+    number-sections: true
+    embed-resources: true
+    theme: Lux
+editor: visual
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+```{r}
+#| echo: true
+#| message: false
+
+library(ggplot2)
+library(tidyverse)
+library(here)
+library(janitor)
+library(patchwork)
+library(lubridate)
+library(forcats)
+library(gghighlight)
+library(stringr)
+library(maps)
+library(ggtext)
+library(showtext)
+library(scales)
+library(rnaturalearth)
+library(rnaturalearthdata)
+```
+
+## Project Intentions
+
+### Chosen Visualization Option
+
+I have chosen Option 1, which involves me answering one overarching question while addressing three smaller sub-questions.
+
+### Questions to Answer
+
+[**Overarching Question**]{.underline}: How are volcanoes spatially distributed around the world, and why is this the case?
+
+[**Sub-Questions**]{.underline}:
+
+1.  Where are volcanoes spatially clustered around the world?
+2.  What is the primary rock type that makes up volcanoes?
+3.  What geologic setting do volcanoes primarily form in?
+
+### Variables Used to Answer Questions
+
+### Inspiration Visualizations
+
+### Hand-Drawn + Powerpoint Visualization Drafts 
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-align: "center"
+#| out-width: "100%"
+#| fig-alt: "Alt text here"
+
+knitr::include_graphics(here("images","ring_of_fire.jpg"))
+
+knitr::include_graphics(here("images","ppt_draft.jpg"))
+```
+
+## Initial Visualization Drafts
+
+### Loading Data 
+
+```{r}
+#| echo: true
+#| message: false
+
+#LOADING INITAL DATA 
+volcano_og <- read.csv(here("data", "volcano_list.csv"))
+volcano_pop_og <- read.csv(here("data", "volcano_pop.csv"))
+
+#CREATING MODIFIED VOLCANO DATA 
+volcano_mod <- volcano_og |>
+  clean_names() |>
+  filter(last_known_eruption != "Unknown") |>
+  mutate(
+    eruption_year = case_when(
+      grepl("BCE", last_known_eruption) ~ -as.numeric(gsub(" BCE", "", last_known_eruption)),
+      grepl("CE", last_known_eruption)  ~ as.numeric(gsub(" CE", "", last_known_eruption)),
+      TRUE ~ as.numeric(last_known_eruption))) |>
+  arrange(eruption_year) 
+
+volcano_mod_1 <- volcano_mod |>
+    filter(eruption_year > 0)
+
+#CREATING ROCK TYPE DF
+levels(as.factor(volcano_mod$dominant_rock_type))
+
+rock_type <- volcano_mod |>
+  filter(last_known_eruption != "Unknown") |>
+  filter(!dominant_rock_type %in% c("No Data (checked)", "")) |>
+   mutate(rock_type = recode(dominant_rock_type, 
+                           "Andesite / Basaltic Andesite" = "Andesite",
+                           "Basalt / Picro-Basalt" = "Basalt",
+                           "Trachybasalt / Tephrite Basanite" = "Trachybasalt + Tephrite",
+                           "Trachyandesite / Basaltic Trachyandesite" = "Trachyandesite",
+                           "Phono-tephrite /  Tephri-phonolite" = "Other",
+                           "Trachyte / Trachydacite" = "Trachyte"))
+
+#FILTERING FOR COMPOSITE + NON-COMPOSITE VOLCANOES
+
+composite_volcanoes <- volcano_mod_1 |>
+  filter(volcano_landform == "Composite")
+
+other_volcanoes <- volcano_mod_1 |>
+  filter(volcano_landform != "Composite")
+```
+
+Loading Design Elements
+
+```{r}
+#| echo: true
+#| message: false
+#importing colors 
+dorange <- c("#BA2D0B")
+porange <- c("#ffba08")
+v_grey <- c("#c0c0c0")
+v_black <- c("#000000")
+
+#fonts
+font_add_google(name = "Roboto", family = "roboto")
+showtext_auto()
+```
+
+### Map of Composite + Other Volcanoes 
+
+```{r}
+
+#| echo: true
+#| message: false
+
+world <- ne_download(scale = 110, type = "countries", category = "cultural")
+
+volcano_map <- ggplot(data = world) +
+  geom_sf(fill = v_grey, color = v_grey) +
+  geom_point(data = other_volcanoes, 
+             aes(x = longitude, y = latitude, color = porange), 
+             size = 0.75) +
+  geom_point(data = composite_volcanoes, 
+             aes(x = longitude, y = latitude, color = dorange), 
+             size = 0.75) +
+  scale_color_identity() +  # Use scale_color_identity to preserve the colors specified
+  theme_void() +
+  labs(title = NULL,
+       x = NULL, y = NULL) +
+  theme(legend.position = NULL, 
+        legend.title = element_blank(),
+        plot.background = element_rect(fill = v_black))
+
+volcano_map
+
+ggsave(
+  filename = here::here("images", "volcano_map.png"),
+  plot = volcano_map, 
+  device = "png",
+  width = 8, 
+  height = 7,
+  unit = "in"
+)
+```
+
+### Majority Rock Type of Volcanoes 
+
+```{r}
+
+#| echo: true
+#| message: false
+
+rock_type <- rock_type |>
+  filter(eruption_year > 0) |>
+  mutate(dominant_rock_type = fct_rev(fct_infreq(dominant_rock_type)))
+
+rock_plot <- rock_type |>
+  ggplot(aes(x = dominant_rock_type)) +  # Reverse the order of the factor levels
+  geom_bar(fill = dorange, alpha = 0.8) +
+  coord_flip() +
+  scale_y_continuous(expand = expansion(mult = 0.01)) +
+  #scale_x_discrete(labels = function(x) strwrap(x, width = 15)) +  # Wrap text after 15 characters
+  labs(x = NULL, 
+       y = "Total Number of Eruptions", 
+       title = NULL) +
+  gghighlight(dominant_rock_type == "Andesite / Basaltic Andesite", 
+              use_direct_label = FALSE) +
+  theme(axis.text.x = element_text(color= dorange, size = 14, family = "roboto"),
+        axis.text.y = element_text(color= dorange, size = 14, family = "roboto"),
+        axis.title.y = element_text(color= dorange, size = 14, family = "roboto"),
+        plot.background = element_rect(fill = v_black),
+        panel.background = element_rect(fill = v_black),
+        panel.grid = element_line(color = v_black))
+
+ggsave(
+  filename = here::here("images", "rock_type.png"),
+  plot = rock_plot, 
+  device = "png",
+  width =9, 
+  height =4,
+  unit = "in"
+)
+rock_plot
+```
+
+### Geologic Setting of Volcano Formation 
+
+```{r}
+
+#| echo: true
+#| message: false
+
+volcano_loc <- read_csv(here("data", "volcano_count.csv"))
+
+# Compute percentages
+volcano_loc$fraction = volcano_loc$eruption_count / sum(volcano_loc$eruption_count)
+
+# Compute the cumulative percentages (top of each rectangle)
+volcano_loc$ymax = cumsum(volcano_loc$fraction)
+
+# Compute the bottom of each rectangle
+volcano_loc$ymin = c(0, head(volcano_loc$ymax, n=-1))
+ 
+# Make the plot
+zone <- ggplot(volcano_loc, aes(ymax=ymax, ymin=ymin, xmax=4, xmin=3, fill=tectonic_setting)) +
+  geom_rect() +
+  coord_polar(theta="y") + 
+  xlim(c(2, 4)) +
+  scale_fill_manual(values = c("#c0c0c0",  "#ffba08", "#BA2D0B" )) +
+  theme_void() +
+  theme(plot.background = element_rect(fill = v_black),
+        panel.background = element_rect(fill = v_black),
+        legend.text = element_text(color = v_grey, size = 11),
+        legend.title = element_blank(),
+        legend.position = "bottom")
+
+zone
+
+ggsave(
+  filename = here::here("images", "form_zone.png"),
+  plot = zone, 
+  device = "png",
+  width =5, 
+  height =5,
+  unit = "in"
+)
+```
+
+## Reflecting on Process
+
+### Challenges Faced
+
+### GGPlot Extensions/ Tools Used
+
+### Feedback Needed from Instructors 
