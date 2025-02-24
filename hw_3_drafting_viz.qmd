@@ -4,7 +4,7 @@ author: "Sam Lance"
 date: February 20, 2025
 format:
   html:
-    code-fold: true
+    code-fold: false
     toc: true
     number-sections: true
     embed-resources: true

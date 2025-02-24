@@ -3146,8 +3146,6 @@ vertical-align: -.125em;
 
 
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span>
@@ -3163,7 +3161,6 @@ vertical-align: -.125em;
 <span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
 <span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearth)</span>
 <span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rnaturalearthdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 <section id="project-intentions" class="level2" data-number="1">
 <h2 data-number="1" class="anchored" data-anchor-id="project-intentions"><span class="header-section-number">1</span> 🧘‍♀️ Project Intentions</h2>
@@ -3243,8 +3240,6 @@ vertical-align: -.125em;
 <section id="loading-data" class="level3" data-number="2.2">
 <h3 data-number="2.2" class="anchored" data-anchor-id="loading-data"><span class="header-section-number">2.2</span> Loading Data</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#LOADING INITAL DATA </span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>volcano_og <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;volcano_list.csv&quot;</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>volcano_pop_og <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="fu">here</span>(<span class="st">&quot;data&quot;</span>, <span class="st">&quot;volcano_pop.csv&quot;</span>))</span>
@@ -3284,14 +3279,11 @@ vertical-align: -.125em;
 <span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>other_volcanoes <span class="ot">&lt;-</span> volcano_mod_1 <span class="sc">|&gt;</span></span>
 <span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(volcano_landform <span class="sc">!=</span> <span class="st">&quot;Composite&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="loading-design-elements" class="level3" data-number="2.3">
 <h3 data-number="2.3" class="anchored" data-anchor-id="loading-design-elements"><span class="header-section-number">2.3</span> Loading Design Elements</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#importing colors </span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>dorange <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#BA2D0B&quot;</span>)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>porange <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;#ffba08&quot;</span>)</span>
@@ -3301,22 +3293,18 @@ vertical-align: -.125em;
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#fonts</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">font_add_google</span>(<span class="at">name =</span> <span class="st">&quot;Roboto&quot;</span>, <span class="at">family =</span> <span class="st">&quot;roboto&quot;</span>)</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="fu">showtext_auto</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="map-of-composite-other-volcanoes" class="level3" data-number="2.4">
 <h3 data-number="2.4" class="anchored" data-anchor-id="map-of-composite-other-volcanoes"><span class="header-section-number">2.4</span> Map of Composite + Other Volcanoes</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>world <span class="ot">&lt;-</span> <span class="fu">ne_download</span>(<span class="at">scale =</span> <span class="dv">110</span>, <span class="at">type =</span> <span class="st">&quot;countries&quot;</span>, <span class="at">category =</span> <span class="st">&quot;cultural&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `ne_110m_admin_0_countries&#39; from data source 
-  `/private/var/folders/7r/2ngr651x2rd0q43kgmpyvwvw0000gn/T/RtmpYrbNZh/ne_110m_admin_0_countries.shp&#39; 
+  `/private/var/folders/7r/2ngr651x2rd0q43kgmpyvwvw0000gn/T/Rtmpw0Pkg9/ne_110m_admin_0_countries.shp&#39; 
   using driver `ESRI Shapefile&#39;
 Simple feature collection with 177 features and 168 fields
 Geometry type: MULTIPOLYGON
@@ -3324,8 +3312,6 @@ Dimension:     XY
 Bounding box:  xmin: -180 ymin: -90 xmax: 180 ymax: 83.64513
 Geodetic CRS:  WGS 84</code></pre>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>volcano_map <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> world) <span class="sc">+</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_sf</span>(<span class="at">fill =</span> v_grey, <span class="at">color =</span> v_grey) <span class="sc">+</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> other_volcanoes, </span>
@@ -3343,7 +3329,6 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> v_black))</span>
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>volcano_map</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3351,8 +3336,6 @@ Geodetic CRS:  WGS 84</code></pre>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;images&quot;</span>, <span class="st">&quot;volcano_map.png&quot;</span>),</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> volcano_map, </span>
@@ -3361,14 +3344,11 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span> <span class="dv">7</span>,</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">&quot;in&quot;</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 <section id="majority-rock-type-of-volcanoes" class="level3" data-number="2.5">
 <h3 data-number="2.5" class="anchored" data-anchor-id="majority-rock-type-of-volcanoes"><span class="header-section-number">2.5</span> Majority Rock Type of Volcanoes</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3405,7 +3385,6 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">&quot;in&quot;</span></span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>rock_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3418,8 +3397,6 @@ Geodetic CRS:  WGS 84</code></pre>
 <section id="geologic-setting-of-volcano-formation" class="level3" data-number="2.6">
 <h3 data-number="2.6" class="anchored" data-anchor-id="geologic-setting-of-volcano-formation"><span class="header-section-number">2.6</span> Geologic Setting of Volcano Formation</h3>
 <div class="cell">
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#| message: false</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -3448,7 +3425,6 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>)</span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>zone</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -3456,8 +3432,6 @@ Geodetic CRS:  WGS 84</code></pre>
 </figure>
 </div>
 </div>
-<details class="code-fold">
-<summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">filename =</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">&quot;images&quot;</span>, <span class="st">&quot;form_zone.png&quot;</span>),</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">plot =</span> zone, </span>
@@ -3466,7 +3440,6 @@ Geodetic CRS:  WGS 84</code></pre>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">height =</span><span class="dv">5</span>,</span>
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">unit =</span> <span class="st">&quot;in&quot;</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 </div>
 </section>
 </section>

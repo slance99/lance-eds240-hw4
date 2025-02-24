@@ -293,24 +293,35 @@ rock_plot
 ```
 
 ```{r}
-rock_type <- rock_type |>
-  filter(eruption_year > 0) |>
-  mutate(dominant_rock_type = fct_rev(fct_infreq(dominant_rock_type)))
-
 rock_plot <- rock_type |>
-  ggplot(aes(x = dominant_rock_type)) +  # Reverse the order of the factor levels
+  filter(eruption_year > 0) |>
+  ggplot(aes(x = fct_rev(fct_infreq(rock_type)))) +  # Reverse factor levels
   geom_bar(fill = dorange, alpha = 0.8) +
   coord_flip() +
   scale_y_continuous(expand = expansion(mult = 0.01)) +
-  #scale_x_discrete(labels = function(x) strwrap(x, width = 15)) +  # Wrap text after 15 characters
   labs(x = NULL, 
        y = "Total Number of Eruptions", 
-       title = NULL) +
+       title = "Eruptions by Rock Type",
+       subtitle = "What are the rocks most frequently produced by volcanic eruptions?") +
   gghighlight(dominant_rock_type == "Andesite / Basaltic Andesite", 
               use_direct_label = FALSE) +
-  theme(axis.text.x = element_text(color= dorange, size = 14, family = "roboto"),
-        axis.text.y = element_text(color= dorange, size = 14, family = "roboto"),
-        axis.title.y = element_text(color= dorange, size = 14, family = "roboto"),
+  theme(axis.text.x = element_text(color = v_grey, 
+                                   size = 40, 
+                                   family = "roboto"),
+        axis.text.y = element_text(color = v_grey, 
+                                   size = 40, 
+                                   family = "roboto"),
+        axis.title.y = element_text(color = v_grey, 
+                                    size = 40, 
+                                    family = "roboto"),
+        plot.title = element_text(color = v_grey, 
+                                  size = 50, 
+                                  family = "roboto",
+                                  face = "bold"),
+        plot.subtitle = element_text(color = v_grey, 
+                                     size = 35, 
+                                     family = "roboto",
+                                     face = "italic"),
         plot.background = element_rect(fill = v_black),
         panel.background = element_rect(fill = v_black),
         panel.grid = element_line(color = v_black))
@@ -319,11 +330,12 @@ ggsave(
   filename = here::here("images", "rock_type.png"),
   plot = rock_plot, 
   device = "png",
-  width =9, 
-  height =4,
+  width = 9, 
+  height = 4,
   unit = "in"
 )
 rock_plot
+
 ```
 
 Circle Graph
