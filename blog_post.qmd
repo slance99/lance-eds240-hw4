@@ -1,0 +1,81 @@
+---
+title: "A Lesson from Gollum: Diving Deeper into Composite Volcanoes"
+author: "Sam Lance"
+date: March 8, 2025
+format:
+  html:
+    code-fold: false
+    toc: false
+    number-sections: true
+    embed-resources: true
+    theme: Lux
+editor: visual
+  markdown: 
+    wrap: 72
+execute:
+  echo: true
+  message: false
+  warning: false
+---
+
+![Author Creating Her Data Visualization](www/sam_gollum.jpg){fig-alt="Sam Lance Photoshopped Hereself onto a Photo of Gollum from Lord of the Rings Falling into a Volcano as a Joke."}
+
+## Why Volcanoes?
+
+While Gollum spent only a few moments diving deep into Mount Doom, I have spent the past few weeks diving deep into composite volcanoes in R. With my degree in Geosciences (and recent love of LOTR), my academic interests generally return to the abiotic factors in our world. I have always been interested in volcanoes and their relationship to the movement of Earth's tectonic plates, but have never had the opportunity to learn more outside of introductory geology courses.
+
+In looking for a dataset to create an infographic on, I discovered the Smithsonian Institution National Museum of Natural History's Global Volcanism Program's dataset. Detailing all known volcanic eruptions from the last 12,000 years, it provided the perfect opportunity for me to learn more about volcanoes and practice my skills in R!
+
+After looking into the data more closely, I realized it showed very clear trends that specific types of volcanoes, composite volcanoes, were clustered around the Pacific Ocean. This creates the famous Ring of Fire, formed due to the unique tectonic setting of the region, which naturally produces these large, incredibly destructive volcanoes. While many people learn about the Ring of Fire in middle school science courses, many do not know the mechanisms behind its formation. In addition to satisfying my own personal desire to learn about volcanoes, this infographic is meant to provide this information to a broader audience in an accessible way.
+
+## The Visualization
+
+![Composite Volcano Data Visualization](www/volc_viz.jpg){fig-alt="Final infographic showing the high concentration of volcanoes around the ring of fire. It also shows that these volcanoes are primarily made of andesite and form in subduction zones."}
+
+## Design Element Selection
+
+When brainstorming my design, all design elements centered around my conception of the map. I wanted the Ring of Fire to be fully visible with the Pacific Ocean centered, and text taking up the blank space in the middle. This provides visual context for the data, as the sheer amount of composite volcanoes and their clear spacing would be unclear without this spatial component.
+
+From there, I knew I needed to show how overwhelming amount of volcanoes that were made up andesite and that the majority of volcanoes are formed in subduction zones are compared to other types. A mix of a bar chart using gg_highlight and a donut chart with the same visual effect provided the stark contrast needed to provide this emphasis. I placed these below my map, and right below my last annotation in the Pacific Ocean, so the eye naturally gravitates towards them after fully reading the text. 
+
+The overall story of the infographic, howevever, is provided by the text annotations. I wanted to create a series of questions in my walkthrough, and have the next figure help provide the answer. Additionally, since the topic is foreign to most of my viewers, I wanted to make sure I provided scientific background to terms people might not have heard before such as subduction or andesite. Each annotation is meant to be directly related to a graphic, and provide clear yet accessible context. For this reason, text on the actual graphs was kept incredibly minimal, to let the annotations speak for themselves. 
+
+To stay with the volcano theme, I chose a color palette that reminded me of different elements of volcanoes: grey for volcanic ash, black for obsidian formed by composite volcanoes, and my highlighting colors shades of red and orange for magma. While I likely could have added some fun flame text throughout the infographic, I wanted this to be something that could be sent to a teacher or used in a classroom, so I kept the design more professional and used the Roboto font throughout. 
+
+While my infographic does not specifically use a colorblind friendly palette, the majority of the graphic is black, white, and grey. All data is conveyed both with visual elements as well as color, so a completely colorblind viewer of the graphic would not be missing any information that a viewer with full color vision would have. 
+
+```{r}
+# 1.  graphic form (you are not limited to just those fundamental chart types discussed in weeks 2 & 4 – explore other chart types and don’t be afraid to get creative with it; check out some of these awesome data viz creators to find inspiration)
+# 
+# 2.  text (e.g. titles, captions, annotations, axis labels, axis text)
+# 
+# 3.  themes (i.e. all non-data plot elements; these should be intentionally modified and visually-pleasing)
+# 
+# 4.  colors
+# 
+# 5.  typography
+# 
+# 6.  general design (e.g. group order, spacing, text orientation, data-ink ratio, creating a visual hierarchy, avoiding information overload)
+# 
+# 7.  contextualizing your data
+# 
+# 8.  centering your primary message
+# 
+# 9.  considering accessibility (e.g. colorblind-friendly palettes / contrast, alt text)
+# 
+# 10. applying a DEI lens to your design, as appropriate (e.g. considering the people / communities / places represented in your data, consider how you frame your questions / issue)
+```
+
+## The Code
+
+```{r}
+
+#INSTRUCTIONS
+# Open with an engaging introduction paragraph(s), which states your motivation, question(s), data / data source(s), and goal(s) of your visualization. Be sure to review the EDS 296 materials on writing data science blog posts for tips on crafting a story and engaging your readers.
+# 
+# Embed / render your final data visualization product(s) (e.g. your full infographic) following your introduction. 
+# 
+# The body of your blog post should address your approach and decisions for each of the ten design elements listed above (though you are welcome and encouraged to comment on any others that are not explicitly listed). If your visualizations do not include or consider a listed element(s), please comment on why (it’s possible that not all ten elements will be applicable to your visualizations). You may choose to render and refer to individual / component data visualizations throughout the body of your blog post, as necessary or appropriate.
+# 
+# Include the all code used to generate your final data viz products in a foldable code chunk (folded by default; see code chunk option, code-fold: true), at the end of your blog post. Be sure to include some written text beforehand that lets your readers know that they can explore the full code by expanding the chunk. Here, your code should:
+```

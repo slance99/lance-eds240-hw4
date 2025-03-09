@@ -120,7 +120,7 @@ levels(as.factor(volcano_mod$dominant_rock_type))
 rock_type <- volcano_mod |>
   filter(last_known_eruption != "Unknown") |>
   filter(!dominant_rock_type %in% c("No Data (checked)", "")) |>
-   mutate(rock_type = recode(dominant_rock_type, 
+   mutate(rock_type = recode(dominant_rock_type,
                            "Andesite / Basaltic Andesite" = "Andesite",
                            "Basalt / Picro-Basalt" = "Basalt",
                            "Trachybasalt / Tephrite Basanite" = "Trachybasalt + Tephrite",
